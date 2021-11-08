@@ -595,7 +595,7 @@ void ul_metric_rr::sched_users(std::map<uint16_t, sched_ue>& ue_db, ul_sf_sched_
   // copy slicing mask to tti slicing mask. Do this at every new tti
     for (int s_idx = 0; s_idx < MAX_SLICING_TENANTS; ++s_idx) {
       for (int rbg_idx = 0; rbg_idx < MAX_MASK_LENGTH; ++rbg_idx) {
-        slicing_structure[s_idx].ul_tti_slicing_mask[rbg_idx] = slicing_structure[s_idx].slicing_mask[rbg_idx];
+        slicing_structure[s_idx].ul_tti_slicing_mask[rbg_idx] = slicing_structure[s_idx].ul_slicing_mask[rbg_idx];
       }
     }
   }

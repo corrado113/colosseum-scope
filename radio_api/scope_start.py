@@ -505,6 +505,7 @@ def run_scope(bs_ue_num: int, iperf: bool, use_colosseumcli: bool,
         if write_config_parameters:
             write_config_params(config_params)
             write_tenant_slicing_mask(config_params)
+            write_tenant_slicing_mask(config_params, ul=True)
             write_slice_scheduling(config_params)
         else:
             logging.info('Not writing configuration parameters on file')
