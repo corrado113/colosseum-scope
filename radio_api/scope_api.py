@@ -922,9 +922,10 @@ def set_slice_users(imsi_slice_dict: dict()) -> None:
 def set_slice_resources(slice_idx: int, slice_mask: str, ul: bool=False) -> None:
 
     path = constants.SCOPE_CONFIG
-    filename = 'slicing/slice_allocation_mask_tenant_'
     if ul:
-        filename = 'ul_' + filename
+        filename = 'slicing/ul_slice_allocation_mask_tenant_'
+    else:
+        filename = 'slicing/slice_allocation_mask_tenant_'
     path += filename
 
     write_full_slice_mask(slice_idx, slice_mask, 1, path)
