@@ -4,7 +4,10 @@ SCOPE is a development environment for softwarized and virtualized NextG cellula
 It provides: (i) A ready-to-use portable open-source cellular container with flexible 5G-oriented functionalities; (ii) data collection tools, such as dataset generation functions for recording cellular performance and metrics, and for facilitating data analysis; (iii) a set of APIs to control and reprogram key functionalities of the full cellular stack at run time, without requiring redeploying the network, and (iv) an emulation environment with diverse cellular scenarios closely matching real-world deployments for precise prototyping NextG network solutions.
 SCOPE has been prototyped and benchmarked on the <a href="https://www.colosseum.net" target="_blank">Colosseum</a> wireless network emulator, where an LXC container of SCOPE has been made available, and it is portable to LXC-enabled testbeds.
 
-If you use SCOPE, its APIs or scenarios, please reference the following paper: L. Bonati, S. D'Oro, S. Basagni, and T. Melodia, <i>"SCOPE: An Open and Softwarized Prototyping Platform for NextG Systems,"</i> in Proceedings of ACM MobiSys, June 2021. <a href="https://ece.northeastern.edu/wineslab/papers/bonati2021scope.pdf" target="_blank">[pdf]</a> <a href="https://ece.northeastern.edu/wineslab/wines_bibtex/bonati2021scope.txt" target="_blank">[bibtex]</a>
+If you use SCOPE, its APIs or scenarios, please reference the following paper:
+> L. Bonati, S. D'Oro, S. Basagni, and T. Melodia, <i>"SCOPE: An Open and Softwarized Prototyping Platform for NextG Systems,"
+> </i> in Proceedings of ACM MobiSys, June 2021.
+> <a href="https://ece.northeastern.edu/wineslab/papers/bonati2021scope.pdf" target="_blank">[pdf]</a> <a href="https://ece.northeastern.edu/wineslab/wines_bibtex/bonati2021scope.txt" target="_blank">[bibtex]</a>
 
 This work was partially supported by the U.S. National Science Foundation under Grant CNS-1923789 and the U.S. Office of Naval Research, Grants N00014-19-1-2409 and N00014-20-1-2132.
 
@@ -39,9 +42,9 @@ Quick start on Colosseum with base configuration:
 - Main SCOPE API scripts:
     - `constants.py`: Constant parameters used by the remaining scripts
     - `scope_api.py`: APIs to interact with cellular base station
-    - `scope_start.py`: Quick start script for running on Colosseum testbed: Parse configuration file, configure and start callular applications (i.e., base station and core network, or user). If using the quick start script outside Colosseum some pieces might require minor adaptation, e.g., manually supplying the node list instead of leveraging the automatic node discovery 
+    - `scope_start.py`: Quick start script for running on Colosseum testbed: Parse configuration file, configure and start cellular applications (i.e., base station and core network, or user). If using the quick start script outside Colosseum some pieces might require minor adaptation, e.g., manually supplying the node list instead of leveraging the automatic node discovery. Note that this script generates runtime logs in the `/logs` directory. If running it on your local machine, please make sure that such directory exists, and that your user can write inside it
     - `support_functions.py`: Additional support functions
-- Exemplary scripts (to be run at the base station:
+- Exemplary scripts (to be run at the base station):
     - `heuristic.py`: Read performance metrics from dataset and implement arbitrary heuristic policy. In this example, read downlink buffer and throughput relative to served users from performance dataset. Then assign more resources to slices if buffers are above threshold (policy slice 0), and throughput is above threshold (policy for slice 2). If more users are served in a single slice, also change the slice scheduling policy from round-robin to waterfilling.
     - `slice_heuristic.py`: Periodically modify number of PRBs allocated to the network slices.
 - Configuration files:
@@ -60,19 +63,19 @@ Quick start on Colosseum with base configuration:
 A list of the configuration parameters accepted by SCOPE APIs follows.
 
 - `bs-config`/`ue-config`: Base station/UE configuration parameters to override those specified on srsLTE configuration files. Format as json, e.g., `{'n_prb': 50, 'dl_freq': 2655000000, 'ul_freq': 2535000000}`
-- `capture-pkts`: Enable packet capture and dumps them on `.pcap` files through `tcpdump`. By default, the monitored interfaces are `srs_spgw_sgi`, `tun_srsue`, and Colosseum `tr0` interfaces
+- `capture-pkts`: Enable packet capture and dumps them on `.pcap` files through `tcpdump`. By default, the monitored interfaces are `srs_spgw_sgi`, `tun_srsue`, and Colosseum `tr0`
 - `colcli`: Use `colosseumcli` APIs to get list of active nodes. This parameter is specific to Colosseum and it is only available in interactive mode
 - `config-file`: JSON-formatted configuration file where to read these parameters from. The other arguments are ignored if a configuration file is passed
 - `custom-ue-slice`: Use UE-slice associations passed in the configuration file
 - `dl-freq`/`ul-freq`: Downlink/uplink frequency for base station and users [Hz]
 - `dl-prb`: Number of downlink PRBs to use at the base station
-- `force-dl-modulation`/`force-ul-modulation`: Force downlink/uplink modulation from base station to users
+- `force-dl-modulation`/`force-ul-modulation`: Force downlink/uplink modulation of base station/users
 - `global-scheduling-policy`: Global MAC-layer scheduling policy. Used at base station side, overruled by slice-dependent scheduling if network slicing is enabled. Possible values are: `0`: Round-robin, `1`: Waterfilling, `2`: Proportionally fair
 - `iperf`: Generate traffic through `iperf3`, downlink only
 - `network-slicing`: Enable network slicing. Used at base station side
-- `slice-allocation`: Base station slice allocation.<sup>[1](#footnote1)</sup> This is passed in the form of `{slice_num: [lowest_allower_rbg, highest_allowed_rbg], ...}` (inclusive). E.g., `{0: [0, 3], 1: [5, 7]}` assigns RBGs 0-3 to slice 0 and 5-7 to slice 1
+- `slice-allocation`: Base station slice allocation.<sup>[1](#footnote1)</sup> This is passed in the form of `{slice_num: [lowest_allowed_rbg, highest_allowed_rbg], ...}` (inclusive). E.g., `{0: [0, 3], 1: [5, 7]}` assigns RBGs 0-3 to slice 0 and 5-7 to slice 1
 - `slice-scheduling-policy`: Slicing policy for each slice in a list format.<sup>[1](#footnote1)</sup> E.g., `[2, 0, 1, ...]` assigns policy 2 to slice 0, policy 0 to slice 1 and policy 1 to slice 2. Possible values are: `0`: Round-robin, `1`: Waterfilling, `2`: Proportionally fair 
-- `slice-users`: Slice UEs in the form of `{slice_num: [ue1, ue2, ...], ...}`, e.g., `{0: [1, 5], 1: [2, 3, 4]}` associates UEs 1, 5 to slice 0 and UEs 2, 3, 4 to slice 1. The UE IDs correspond to the SRNs of the reservation from the base station onwards. E.g., if SRNs 3, 5, 7, 8 are reserved and `users-bs` is set to 3, the base station is SRN 3, while SRNs 5, 7 and 8 are the 1st, 2nd and 3rd users, respectively
+- `slice-users`: Slice UEs in the form of `{slice_num: [ue1, ue2, ...], ...}`, e.g., `{0: [2, 6], 1: [3, 4, 5]}` associates UEs 2, 6 to slice 0 and UEs 3, 4, 5 to slice 1. The UE IDs correspond to the SRNs of the reservation (the first base station has ID equal to 1). E.g., if SRNs 3, 5, 7, 8 are reserved and `users-bs` is set to 3, the base station is SRN 3, while SRNs 5, 7 and 8 are the 1st, 2nd and 3rd users, respectively
 - `tenant-number`: Number of network slicing tenants. By default, a maximum of 10 tenants is supported. In case more than 10 tenants are needed, also modify `MAX_SLICING_TENANTS` in `radio_code/srsLTE/srsenb/hdr/global_variables.h`
 - `users-bs`: Maximum number of users per base station. This parameter is used to "elect" the base stations in the network. E.g., if `users-bs` is set to 3 and there are 8 nodes in the reservation, nodes 1 and 5 are elected as base station and nodes 2, 3, 4, 6, 7, 8 are UEs
 - `write-config-parameters`: If enabled, writes configuration parameters on file (e.g., scheduling/slicing policies). Done at the base station-side
